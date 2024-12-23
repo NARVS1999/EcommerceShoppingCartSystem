@@ -1,0 +1,24 @@
+{
+    "products": [
+        {
+            "productName": "Mogu Mogu Lychee Juice",
+            "productDescription": "A refreshing lychee-flavored drink with chewy nata de coco jelly cubes.",
+            "productPrice": 50.00
+        },
+        {
+            "productName": "Mogu Mogu Strawberry Yogurt",
+            "productDescription": "Creamy yogurt drink blended with strawberry flavor and nata de coco for added texture.",
+            "productPrice": 50.00
+        },
+        {
+            "productName": "Mogu Mogu Mango Coconut",
+            "productDescription": "Tropical mango juice with soft coconut jelly pieces, perfect for a summer treat.",
+            "productPrice": 50.00
+        },
+        {
+            "productName": "Mogu Mogu Melon Flavored Drink",
+            "productDescription": "Sweet melon-flavored beverage featuring chewy nata de coco for a unique drinking experience.",
+            "productPrice": 50.00
+        }
+    ]
+}

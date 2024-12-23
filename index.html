@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-commerce Shopping Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://fonts.cdnfonts.com/css/inter" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-5">
+        <h1 class="text-2xl font-bold mb-5 text-indigo-500">Mogu Mogu Product Suggestion</h1>
+
+        <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+            <!-- Product items will be dynamically injected here -->
+        </div>
+
+        <h2 class="text-xl font-semibold mb-3 text-indigo-500">Cart</h2>
+        <div id="cart-items" class="bg-indigo-100 border-4 border-indigo-500 p-4 rounded-lg shadow-md mb-5">
+            <!-- Cart items will be displayed here -->
+        </div>
+
+        <div class="flex justify-between items-center">
+            <span class="text-lg font-bold">Total Price: P<span id="total-price">0.00</span></span>
+            <div>
+                <button id="buy-cart" class="bg-green-500 text-white px-4 py-2 rounded">Buy</button>
+                <button id="clear-cart" class="bg-red-500 text-white px-4 py-2 rounded">Clear Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Mogu Mogu Lychee Juice", price: 50, image: "Mogu Mogu Lychee Juice.jpg" },
+            { id: 2, name: "Mogu Mogu Strawberry Yogurt", price: 50, image: "Mogu Mogu Strawberry Yogurt.JPG" },
+            { id: 3, name: "Mogu Mogu Mango Coconut", price: 50, image: "Mogu Mogu Mango Coconut.JPG" },
+            { id: 4, name: "Mogu Mogu Melon Flavored Drink", price: 50, image: "Mogu Mogu Melon Flavored Drink.JPG" }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // Function to render products
+        function renderProducts() {
+            const productList = document.getElementById("product-list");
+            productList.innerHTML = "";
+
+            products.forEach((product) => {
+                const productDiv = document.createElement("div");
+                productDiv.className = "border-4 p-4 rounded-lg shadow bg-indigo-100 border-indigo-500";
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-40 bg-white object-contain mb-2 rounded-lg border-2 border-black">
+                    <h3 class="font-semibold">${product.name}</h3>
+                    <p>Price: P${product.price}</p>
+                    <button onclick="addToCart(${product.id})" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">Add to Cart</button>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+        // Function to add item to cart
+        function addToCart(productId) {
+            const product = products.find((p) => p.id === productId);
+            const existingProduct = cart.find((item) => item.id === productId);
+
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCart();
+        }
+
+        // Function to render cart
+        function renderCart() {
+            const cartItems = document.getElementById("cart-items");
+            cartItems.innerHTML = "";
+
+            let totalPrice = 0;
+
+            cart.forEach((item) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "flex justify-between items-center mb-2";
+                itemDiv.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-contain border-2 border-black mr-2 rounded">
+                    ${item.name} - P${item.price} x ${item.quantity}
+                    <div>
+                        <button onclick="updateQuantity(${item.id}, 1)" class="bg-green-500 text-white px-2 rounded">+</button>
+                        <button onclick="updateQuantity(${item.id}, -1)" class="bg-yellow-500 text-white px-2 rounded ${item.quantity === 1 ? "opacity-50 cursor-not-allowed" : ""}" ${item.quantity === 1 ? "disabled" : ""}>−</button>
+                        <button onclick="removeFromCart(${item.id})" class="bg-red-500 text-white px-2 rounded">Remove</button>
+                    </div>
+                `;
+
+                totalPrice += item.price * item.quantity;
+                cartItems.appendChild(itemDiv);
+            });
+
+            document.getElementById("total-price").innerText = totalPrice.toFixed(2);
+        }
+
+        // Function to update item quantity
+        function updateQuantity(productId, change) {
+            const existingProduct = cart.find((item) => item.id === productId);
+
+            if (existingProduct) {
+                existingProduct.quantity += change;
+
+                if (existingProduct.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    renderCart();
+                }
+            }
+        }
+
+        // Function to remove item from cart
+        function removeFromCart(productId) {
+            cart = cart.filter((item) => item.id !== productId);
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCart();
+        }
+
+        // Function to clear the cart
+        document.getElementById("clear-cart").onclick = function () {
+            cart = [];
+            localStorage.removeItem("cart");
+            renderCart();
+        };
+
+        // Function to buy items in the cart
+        document.getElementById("buy-cart").onclick = function () {
+            if (cart.length > 0) {
+                alert("Products purchased successfully!");
+                // Clear the cart after purchase
+                cart = [];
+                localStorage.removeItem("cart");
+                renderCart();
+            } else {
+                alert("Your cart is empty. Please add items to purchase.");
+            }
+        };
+
+        // Initial rendering
+        renderProducts();
+        renderCart();
+    </script>
+</body>
+
+</html>
