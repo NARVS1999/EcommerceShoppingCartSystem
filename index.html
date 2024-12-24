@@ -16,7 +16,7 @@
 
 <body class="bg-gray-100">
     <div class="container mx-auto p-5">
-        <h1 class="text-2xl font-bold mb-5 text-indigo-500">Mogu Mogu Product Suggestion</h1>
+        <h1 class="text-2xl md:text-3xl font-bold mb-5 text-indigo-500 text-center">Mogu Mogu Product Suggestion</h1>
 
         <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
             <!-- Product items will be dynamically injected here -->
@@ -27,13 +27,14 @@
             <!-- Cart items will be displayed here -->
         </div>
 
-        <div class="flex justify-between items-center">
-            <span class="text-lg font-bold">Total Price: P<span id="total-price">0.00</span></span>
-            <div>
+        <div class="flex flex-col md:flex-row justify-between items-center p-4">
+            <span class="text-lg font-bold mb-2 md:mb-0">Total Price: P<span id="total-price">0.00</span></span>
+            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
                 <button id="buy-cart" class="bg-green-500 text-white px-4 py-2 rounded">Buy</button>
                 <button id="clear-cart" class="bg-red-500 text-white px-4 py-2 rounded">Clear Cart</button>
             </div>
         </div>
+        
     </div>
 
     <script>
@@ -53,16 +54,17 @@
 
             products.forEach((product) => {
                 const productDiv = document.createElement("div");
-                productDiv.className = "border-4 p-4 rounded-lg shadow bg-indigo-100 border-indigo-500";
+                productDiv.className = "border-4 p-4 rounded-lg shadow bg-indigo-100 border-indigo-500 mb-4 flex flex-col items-center"; // Center items for mobile view
                 productDiv.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-40 bg-white object-contain mb-2 rounded-lg border-2 border-black">
-                    <h3 class="font-semibold">${product.name}</h3>
-                    <p>Price: P${product.price}</p>
-                    <button onclick="addToCart(${product.id})" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">Add to Cart</button>
-                `;
+            <img src="${product.image}" alt="${product.name}" class="w-full h-40 bg-white object-contain mb-2 rounded-lg border-2 border-black">
+            <h3 class="font-semibold text-center">${product.name}</h3>
+            <p class="text-center">Price: P${product.price}</p>
+            <button onclick="addToCart(${product.id})" class="bg-blue-500 text-white px-4 py-2 rounded mt-2 w-full">Add to Cart</button>
+        `;
                 productList.appendChild(productDiv);
             });
         }
+
 
         // Function to add item to cart
         function addToCart(productId) {
@@ -88,16 +90,18 @@
 
             cart.forEach((item) => {
                 const itemDiv = document.createElement("div");
-                itemDiv.className = "flex justify-between items-center mb-2";
+                itemDiv.className = "flex flex-col sm:flex-row justify-between items-center mb-4 p-2 border rounded shadow-sm"; // Adjusted for mobile view
                 itemDiv.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-contain border-2 border-black mr-2 rounded">
-                    ${item.name} - P${item.price} x ${item.quantity}
-                    <div>
-                        <button onclick="updateQuantity(${item.id}, 1)" class="bg-green-500 text-white px-2 rounded">+</button>
-                        <button onclick="updateQuantity(${item.id}, -1)" class="bg-yellow-500 text-white px-2 rounded ${item.quantity === 1 ? "opacity-50 cursor-not-allowed" : ""}" ${item.quantity === 1 ? "disabled" : ""}>−</button>
-                        <button onclick="removeFromCart(${item.id})" class="bg-red-500 text-white px-2 rounded">Remove</button>
-                    </div>
-                `;
+            <div class="flex items-center mb-2 sm:mb-0">
+                <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-contain border-2 border-black rounded mr-2">
+                <span class="text-sm font-medium">${item.name} - P${item.price} x ${item.quantity}</span>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="updateQuantity(${item.id}, 1)" class="bg-green-500 text-white px-3 py-1 rounded">+</button>
+                <button onclick="updateQuantity(${item.id}, -1)" class="bg-yellow-500 text-white px-3 py-1 rounded ${item.quantity === 1 ? "opacity-50 cursor-not-allowed" : ""}" ${item.quantity === 1 ? "disabled" : ""}>−</button>
+                <button onclick="removeFromCart(${item.id})" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
+            </div>
+        `;
 
                 totalPrice += item.price * item.quantity;
                 cartItems.appendChild(itemDiv);
@@ -105,6 +109,7 @@
 
             document.getElementById("total-price").innerText = totalPrice.toFixed(2);
         }
+
 
         // Function to update item quantity
         function updateQuantity(productId, change) {
